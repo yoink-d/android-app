@@ -10,7 +10,8 @@ The app uses one Android module, Kotlin, Jetpack Compose, Room, coroutines, and 
 | core/model | Links, source formats, output support, queue states, preferences, and file naming. |
 | core/design | Shared Compose controls, original fonts, palette calculation, contrast, and artwork clustering. |
 | data/database | Room entities, DAOs, schema, and transactional metadata. |
-| data/extraction | yt-dlp, native process ownership, FFmpeg, media probing, and verified extractor updates. |
+| data/extraction | Media package installation, yt-dlp, native process ownership, FFmpeg, media probing, and verified extractor updates. |
+| data/updates | GitHub release selection, APK download verification, and Android installation handoff. |
 | data/storage | HTTPS transfers, resume validators, MediaStore/document-provider access, artwork, and recoverable file operations. |
 | download | Scheduling, acquisition, processing, saving, connectivity, and the foreground service. |
 | feature | Capture, Library, Downloads, History, Player, and Settings screens and ViewModels. |
@@ -22,6 +23,8 @@ Capture validates the HTTPS link and inspects the source before the user confirm
 DownloadEngine persists the job before requesting the foreground service. DownloadRules allows two occupied slots and one source acquisition. Direct HTTPS transfers can run alongside source acquisition. Source webpages are inspected again for every attempt, so jobs do not persist expiring stream URLs.
 
 Each attempt has a unique ID. JobRepository rejects late writes from stopped or replaced attempts. Pause and cancellation wait for owned work to stop before a slot is released. NativeProcessRunner starts a process group for each request so cancellation also stops its child processes.
+
+YouTube 403 recovery refreshes the extractor and inspects the source page again once. It reuses valid completed streams and retains the requested source quality. A persistent 403 becomes an actionable error.
 
 The foreground data-sync service displays progress and holds a bounded wake lock. Service ownership prevents an old service from pausing a newer service's work. Interrupted active jobs restore as paused. Android's foreground-service timeout pauses work and retains checkpoints.
 
@@ -39,7 +42,15 @@ Clearing history deletes terminal jobs and their checkpoints. It preserves libra
 
 Media3 plays saved files offline. Video uses one player across embedded and fullscreen views. Unsupported ALAC, AIFF, CAF, or video codecs can use a private playback conversion while preserving the saved original. Dismissing the player clears its ViewModel store and releases the player.
 
-ExtractorUpdates downloads official yt-dlp releases over HTTPS, verifies SHA-256, checks the version and extractor loading, and switches an atomic active pointer. The previous verified generation remains available for rollback. CPython, QuickJS, FFmpeg, and bundled certificates update with the app.
+Gradle resolves the pinned native AARs as build inputs. scripts/prepare-runtime.py extracts the small executable launchers for APK installation and publishes Python and FFmpeg archives separately. R8, resource shrinking, and four ABI splits reduce the initial APK. AndroidX's small native graphics library remains in its matching ABI.
+
+RuntimePackages chooses the installed launcher's ELF architecture. It downloads only that ABI's packages and the pinned extractor, checks sizes and hashes, and extracts regular files and declared internal symlinks into a staging directory. Python and FFmpeg probes must pass before activation. The generation identity includes the package and extractor hashes. An interrupted transfer can resume; an installed generation reopens offline without another download. Pausing sets a terminal setup state even if the installation coroutine has not started.
+
+ExtractorRuntime waits for media readiness and uses the installed launchers with the downloaded libraries and certificates. Saved playback and database recovery remain independent of setup. ExtractorUpdates restores a verified current or fallback extractor, checks official releases automatically, and switches an atomic pointer after checksum, version, and extractor-loading checks. A previous verified generation remains available for rollback.
+
+AppUpdates checks the public releases list on foreground opening. AppReleases selects the highest compatible version code, including prereleases, from yoinkd-update.json and the release assets. Downloading verifies the complete APK, package ID, version, minimum SDK, certificate, and native architecture. FileProvider shares only the verified update cache with Android's installer. Installation permission and confirmation remain Android actions.
+
+The tag workflow signs all architecture APKs with an external keystore, validates the runtime assets, and publishes checksums and changelog-derived release notes. Published version codes advance with the workflow run number. Numbered alphas can explicitly retain the existing development signing key; stable releases require production signing.
 
 ## Reference and generated files
 

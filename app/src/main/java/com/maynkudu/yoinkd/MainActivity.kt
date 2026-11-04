@@ -31,4 +31,9 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
         incomingRequest(intent)?.let { model.request.value = it }
     }
+
+    override fun onStart() {
+        super.onStart()
+        model.container.onForeground()
+    }
 }

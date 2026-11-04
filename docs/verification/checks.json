@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-04T01:59:31.503153+00:00",
+  "checked_at_utc": "2026-11-04T18:20:55.289727+00:00",
   "ios_source_commit": "0c6ba72b046b3a250d8f27754bc6090d2217f264",
   "environment": {
     "os": "Arch Linux",
@@ -9,7 +9,8 @@
     "target_sdk": 35,
     "build_tools": "35.0.0"
   },
-  "command": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./scripts/check.sh",
+  "command": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk ANDROID_HOME=/opt/android-sdk ./scripts/check.sh -PyoinkdVersionCode=1001",
+  "signing_environment": "External existing alpha keystore. Values are not recorded.",
   "build": "passed",
   "assets": {
     "status": "passed",
@@ -19,7 +20,7 @@
     "font_and_icon_licenses": "verified"
   },
   "jvm_tests": {
-    "total": 16,
+    "tests": 31,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
@@ -39,8 +40,29 @@
         "skipped": 0
       },
       {
+        "name": "com.maynkudu.yoinkd.data.extraction.RuntimeArchiveTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.maynkudu.yoinkd.data.extraction.YoutubeRecoveryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
         "name": "com.maynkudu.yoinkd.data.storage.HttpMediaClientTest",
         "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.maynkudu.yoinkd.data.updates.AppReleasesTest",
+        "tests": 5,
         "failures": 0,
         "errors": 0,
         "skipped": 0
@@ -49,54 +71,179 @@
   },
   "lint": {
     "errors": 0,
-    "warnings": 72,
+    "warnings": 74,
     "categories": {
       "AndroidGradlePluginVersion": 3,
       "GradleDependency": 45,
+      "ConfigurationScreenWidthHeight": 1,
       "ModifierParameter": 1,
       "DataExtractionRules": 1,
       "ObsoleteSdkInt": 1,
       "VectorPath": 2,
       "MonochromeLauncherIcon": 1,
       "IconLocation": 2,
-      "UseKtx": 16
+      "UseKtx": 17
     }
   },
   "application": {
     "id": "com.maynkudu.yoinkd",
     "name": "yoink'd",
-    "version": "0.1.0",
+    "version": "0.2.0-alpha.1",
+    "version_code": 1001,
     "min_sdk": 29,
     "abis": [
       "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
       "x86_64"
     ]
   },
-  "artifacts": [
-    {
-      "path": "app/build/outputs/apk/debug/app-debug.apk",
-      "bytes": 148931848,
-      "sha256": "37f36f5d028a3f28553fd19493e2531c8bf3a3e02992b5f6a4bdedc272d3cb2f",
-      "signing": "development key"
+  "local_release": {
+    "status": "signed and validated",
+    "signing_certificate_sha256": [
+      "cd07003ff90a5f5b0896e43ad3bf89300307e3f6f5ce64eecfbc41762b4df93f"
+    ],
+    "matches_published_alpha_key": true,
+    "artifacts": {
+      "arm64-v8a": {
+        "bytes": 6411206,
+        "filename": "yoinkd-0.2.0-alpha.1-arm64-v8a.apk",
+        "sha256": "1e2333dcf849232036ca9a8dda256fb4d344d109c70ff43047894e675f2983f5"
+      },
+      "armeabi-v7a": {
+        "bytes": 6360776,
+        "filename": "yoinkd-0.2.0-alpha.1-armeabi-v7a.apk",
+        "sha256": "117762ce7928444e224f211c69d7fd14c1751104318fb98d3a7268858ccf7812"
+      },
+      "x86": {
+        "bytes": 6452376,
+        "filename": "yoinkd-0.2.0-alpha.1-x86.apk",
+        "sha256": "4d9154ed20c4cf55bd13c88e134dad58b5c9ffacb77e69d8d891b02dfb3bc314"
+      },
+      "x86_64": {
+        "bytes": 6455951,
+        "filename": "yoinkd-0.2.0-alpha.1-x86_64.apk",
+        "sha256": "4a4dc2adc328b2400b7ec59ee825f90d820067e85b63396ec2d2c98303aef422"
+      }
     },
-    {
-      "path": "app/build/outputs/apk/release/app-release-unsigned.apk",
-      "bytes": 113105465,
-      "sha256": "3e78291f5a474b66bd170a6c75bc2e94d71d1fd8b28169c2b59a035e67f2c3c0",
-      "signing": "unsigned"
+    "sizes": {
+      "arm64-v8a": {
+        "apkBytes": 6411206,
+        "firstSetupBytes": 53003907
+      },
+      "armeabi-v7a": {
+        "apkBytes": 6360776,
+        "firstSetupBytes": 46372515
+      },
+      "x86": {
+        "apkBytes": 6452376,
+        "firstSetupBytes": 51597200
+      },
+      "x86_64": {
+        "apkBytes": 6455951,
+        "firstSetupBytes": 55971341
+      }
     },
-    {
-      "path": "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-      "bytes": 2388364,
-      "sha256": "b81061b7cd70062d6ce7e4a01c39c6d1670473889651cea4a399ff1fb87a0acd",
-      "signing": "development key"
-    }
-  ],
+    "all_release_checksums": "passed"
+  },
   "device_checks": {
-    "status": "deferred at user request",
-    "integration_tests_authored": 9,
-    "integration_tests_executed": 0,
-    "prior_evidence": "docs/verification/screenshots/offline-fullscreen.png",
-    "final_runtime_parity": "unverified"
+    "device": "Pixel 8 emulator",
+    "android": 15,
+    "abi": "x86_64",
+    "integration_tests": {
+      "total": 18,
+      "failures": 0,
+      "runtime_and_updates": 9,
+      "conversion_and_persistence": 9,
+      "network": "Local HTTPS fixtures using cached verified packages"
+    },
+    "manual": {
+      "media_setup_failure_retry": "passed with cached packages",
+      "library_during_failed_setup": "passed",
+      "settings_landscape": "passed",
+      "update_large_text_and_landscape": "passed",
+      "android_install_permission_and_confirmation": "passed using a cached local alpha APK, installation cancelled",
+      "youtube_video_offline_playback": "passed after offline relaunch",
+      "youtube_music": "download and file probe passed; playback unverified",
+      "clipboard_copy_and_paste": "unverified, device CLI reports no Android clipboard shell implementation"
+    },
+    "media": [
+      {
+        "scenario": "youtube-video",
+        "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        "job_id": "23787a51-d2d7-4117-ba1d-592bbfdca13f",
+        "phase": "COMPLETED",
+        "selection": {
+          "kind": "VIDEO",
+          "formatId": "395",
+          "output": "AUTOMATIC",
+          "quality": "240p, AV1"
+        },
+        "source_bytes": 475961,
+        "saved_bytes": 1005782,
+        "duration_seconds": 19.012,
+        "audio_codec": "aac",
+        "video_codec": "h264",
+        "file_probe": "passed"
+      },
+      {
+        "scenario": "youtube-audio",
+        "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        "job_id": "4aaf4e9c-f7f6-4542-b422-8dd5fd1cbee3",
+        "phase": "COMPLETED",
+        "selection": {
+          "kind": "AUDIO",
+          "formatId": "251",
+          "output": "AUTOMATIC",
+          "quality": "106 kbps, OPUS"
+        },
+        "source_bytes": 252182,
+        "saved_bytes": 1386959,
+        "duration_seconds": 19.005542,
+        "audio_codec": "flac",
+        "video_codec": null,
+        "file_probe": "passed"
+      },
+      {
+        "scenario": "youtube-music-audio",
+        "url": "https://music.youtube.com/watch?v=jNQXAC9IVRw",
+        "job_id": "4af39cfe-b505-4f0c-97ab-0cbc9d27a995",
+        "phase": "COMPLETED",
+        "selection": {
+          "kind": "AUDIO",
+          "formatId": "251",
+          "output": "AUTOMATIC",
+          "quality": "106 kbps, OPUS"
+        },
+        "source_bytes": 252182,
+        "saved_bytes": 1386959,
+        "duration_seconds": 19.005542,
+        "audio_codec": "flac",
+        "video_codec": null,
+        "file_probe": "passed",
+        "playback": "unverified"
+      }
+    ]
+  },
+  "implementation_review": {
+    "status": "Final diff checked against approved scope. Plannotator implementation review was not rerun before the user directed publication."
+  },
+  "github_release": {
+    "tag": "v0.2.0-alpha.1",
+    "status": "not yet published"
+  },
+  "remaining_limits": [
+    "The reported physical-phone 403 has not been reproduced.",
+    "ARM64, ARMv7, and x86 execution has not been checked on devices.",
+    "Runtime transfers used local HTTPS fixtures. A full fresh GitHub runtime transfer has not been repeated.",
+    "Broader Library, import, sharing, folder, and theme workflows were not rerun in this change.",
+    "User requested leaving the occupied emulator alone. Public GitHub update installation and Music playback remain unverified."
+  ],
+  "final_local_recheck": {
+    "checked_at_utc": "2026-11-04T18:45:14.186282+00:00",
+    "command": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk ANDROID_HOME=/opt/android-sdk ./gradlew :app:testDebugUnitTest :app:lintDebug --console=plain",
+    "status": "passed",
+    "release_packaging": "All four signed APKs, runtime assets, and SHA256SUMS revalidated.",
+    "github_signing_configuration": "Four Actions signing secrets present and YOINKD_ALLOW_DEVELOPMENT_ALPHA=true. Secret values were not read."
   }
 }

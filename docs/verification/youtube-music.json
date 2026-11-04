@@ -1,0 +1,41 @@
+{
+  "download": {
+    "scenario": "youtube-music-audio",
+    "url": "https://music.youtube.com/watch?v=jNQXAC9IVRw",
+    "job_id": "4af39cfe-b505-4f0c-97ab-0cbc9d27a995",
+    "phase": "COMPLETED",
+    "selection": {
+      "kind": "AUDIO",
+      "formatId": "251",
+      "output": "AUTOMATIC",
+      "quality": "106 kbps, OPUS"
+    },
+    "source_bytes": 252182,
+    "saved_bytes": 1386959,
+    "duration_seconds": 19.005542,
+    "audio_codec": "flac",
+    "video_codec": null,
+    "file_probe": "passed",
+    "playback": "unverified"
+  },
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "flac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2
+      },
+      {
+        "codec_name": "mjpeg",
+        "codec_type": "video"
+      }
+    ],
+    "format": {
+      "duration": "19.005542",
+      "size": "1386959"
+    }
+  }
+}

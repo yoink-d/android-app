@@ -5,16 +5,16 @@ import android.content.ContextWrapper
 import android.net.Uri
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.maynkudu.yoinkd.YoinkApplication
 import com.maynkudu.yoinkd.core.model.MediaKind
 import com.maynkudu.yoinkd.core.model.SourceFormat
 import com.maynkudu.yoinkd.core.model.SourceMedia
 import com.maynkudu.yoinkd.data.JobRepository
 import com.maynkudu.yoinkd.data.PreferencesRepository
 import com.maynkudu.yoinkd.data.database.AppDatabase
-import com.maynkudu.yoinkd.data.extraction.ExtractorRuntime
 import com.maynkudu.yoinkd.data.extraction.MediaProbe
+import com.maynkudu.yoinkd.data.extraction.ExtractorUpdates
 import com.maynkudu.yoinkd.data.extraction.MediaProcessor
-import com.maynkudu.yoinkd.data.extraction.NativeProcessRunner
 import com.maynkudu.yoinkd.data.storage.ArtworkStore
 import com.maynkudu.yoinkd.data.storage.HttpMediaClient
 import com.maynkudu.yoinkd.data.storage.MediaStorage
@@ -41,8 +41,9 @@ class NativeFixture : AutoCloseable {
     val database = Room.inMemoryDatabaseBuilder(base, AppDatabase::class.java).build()
     val preferences = PreferencesRepository(database, scope)
     val jobs = JobRepository(database, scope)
-    val runtime = ExtractorRuntime(base, NativeProcessRunner())
+    val runtime = (base as YoinkApplication).container.runtime
     val http = HttpMediaClient(OkHttpClient())
+    val updates = ExtractorUpdates(context, runtime, http)
     val processor = MediaProcessor(MediaProbe(runtime), runtime, ArtworkStore(http))
     val files = UriFiles(context)
     val storage = MediaStorage(context, database, preferences, files, processor)

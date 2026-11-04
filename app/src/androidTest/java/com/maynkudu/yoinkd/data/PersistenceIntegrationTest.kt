@@ -75,7 +75,7 @@ class PersistenceIntegrationTest {
     }
 
     @Test fun anOldServiceCannotPauseANewerServicesQueuedWork() = runBlocking {
-        val extractor = SourceExtractor(fixture.runtime)
+        val extractor = SourceExtractor(fixture.runtime, fixture.updates)
         val engine = DownloadEngine(fixture.context, fixture.scope, CompletableDeferred(Unit), fixture.jobs,
             MediaInspector(extractor, fixture.http), extractor, fixture.processor, fixture.http,
             fixture.storage, NetworkMonitor(fixture.context))

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.maynkudu.yoinkd.app.AppContainer
 import com.maynkudu.yoinkd.core.model.AccentTheme
 import com.maynkudu.yoinkd.core.model.Appearance
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val container: AppContainer) : ViewModel() {
@@ -15,7 +14,10 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
     val storage = container.storage.status
     val updates = container.updates.state
     val initialized = container.initialized
-    private var updateJob: Job? = null
+    val setup = container.runtimePackages.state
+    val appUpdates = container.appUpdates.state
+    val runtimeVersion = container.runtimePackages.manifest.version
+    val canCancelUpdate: Boolean get() = container.canCancelExtractorUpdate
 
     fun appearance(value: Appearance) = viewModelScope.launch { container.preferences.update { it.copy(appearance = value) } }
     fun theme(value: AccentTheme) = viewModelScope.launch { container.preferences.update { it.copy(theme = value) } }
@@ -23,7 +25,12 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
         try { container.library.relocate(uri) } catch (error: Exception) { container.report(error) }
     }
     fun checkUpdates() = viewModelScope.launch { container.updates.check() }
-    fun update() { updateJob = viewModelScope.launch { container.updates.install() } }
-    fun cancelUpdate() { updateJob?.cancel() }
+    fun update() { container.updateExtractor() }
+    fun cancelUpdate() { container.cancelExtractorUpdate() }
     fun rollback() = viewModelScope.launch { container.updates.rollback() }
+    fun retrySetup() { container.prepareMediaTools() }
+    fun pauseSetup() { container.pauseMediaSetup() }
+    fun checkAppUpdates() { container.checkAppUpdates() }
+    fun downloadAppUpdate() { container.downloadAppUpdate() }
+    fun pauseAppUpdate() { container.pauseAppUpdate() }
 }

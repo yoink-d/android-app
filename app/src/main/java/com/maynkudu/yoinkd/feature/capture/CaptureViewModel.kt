@@ -58,11 +58,12 @@ class CaptureViewModel(private val container: AppContainer, request: IncomingReq
         inspection = viewModelScope.launch {
             try {
                 val media = container.inspector.inspect(link)
+                val support = state.value.support ?: container.runtime.outputSupport()
                 if (identity != revision) return@launch
                 val kind = if (media.choices(state.value.kind).isNotEmpty()) state.value.kind
                     else if (media.choices(MediaKind.VIDEO).isNotEmpty()) MediaKind.VIDEO else MediaKind.AUDIO
                 mutableState.value = state.value.copy(checking = false, media = media, kind = kind,
-                    formatId = null, output = OutputFormat.AUTOMATIC)
+                    formatId = null, output = OutputFormat.AUTOMATIC, support = support)
                 container.artwork.preview(link.value, media.thumbnail)
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) {

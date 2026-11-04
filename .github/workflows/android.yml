@@ -2,6 +2,11 @@ name: Android
 
 on:
   push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
   pull_request:
   workflow_dispatch:
 
@@ -41,3 +46,4 @@ jobs:
             app/build/outputs/apk/androidTest/debug/*.apk
             app/build/reports/
             app/build/test-results/
+            app/build/media-runtime/releases/runtime-manifest.json

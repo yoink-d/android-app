@@ -29,17 +29,22 @@ private data class ExtractorPointer(val current: String, val previous: String? =
 @Serializable
 private data class ExtractorManifest(val version: String, val sha256: String)
 private data class ExtractorRelease(val version: String, val payload: String, val checksums: String)
-private const val BUNDLED_GENERATION = "bundled"
+private const val BOOTSTRAP_GENERATION = "bootstrap"
+private val extractorVersion = Regex("[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
 
 class ExtractorUpdates(context: Context, private val runtime: ExtractorRuntime, private val http: HttpMediaClient) {
     private val root = File(context.noBackupFilesDir, "extractor-releases")
     private val pointerFile = File(root, "active.json")
     private val lock = Mutex()
+    private val automaticCheck = Mutex()
     private val mutableState = MutableStateFlow(ExtractorUpdateState())
     val state = mutableState.asStateFlow()
     private var release: ExtractorRelease? = null
+    private var restored = false
+    private var lastAutomaticCheck = 0L
 
     suspend fun restore() = lock.withLock { withContext(Dispatchers.IO) {
+        if (restored) return@withContext
         runtime.initialize()
         var pointer = runCatching { mediaJson.decodeFromString<ExtractorPointer>(pointerFile.readText()) }.getOrNull()
         if (pointer != null) {
@@ -47,16 +52,26 @@ class ExtractorUpdates(context: Context, private val runtime: ExtractorRuntime, 
             if (current != null) activate(current)
             else {
                 val fallback = pointer.previous?.let { verified(it) }
-                activate(fallback ?: runtime.bundledExtractor)
+                activate(fallback ?: runtime.bootstrapExtractor)
                 pointer = if (fallback != null) ExtractorPointer(generation()) else null
                 if (pointer != null) atomicText(pointerFile, mediaJson.encodeToString(pointer))
                 else pointerFile.delete()
                 mutableState.value = mutableState.value.copy(error = "The installed update failed verification. The previous extractor was restored.")
             }
         }
-        mutableState.value = mutableState.value.copy(installed = version(runtime.activeExtractor ?: runtime.bundledExtractor),
+        mutableState.value = mutableState.value.copy(installed = version(runtime.activeExtractor ?: runtime.bootstrapExtractor),
             canRollback = pointer?.previous?.let { verified(it) } != null)
+        restored = true
     } }
+
+    suspend fun refreshAutomatically(force: Boolean = false) = automaticCheck.withLock {
+        restore()
+        val now = System.currentTimeMillis()
+        if (!force && now - lastAutomaticCheck in 0..21_600_000) return@withLock
+        lastAutomaticCheck = now
+        check()
+        if (state.value.error == null && state.value.latest != state.value.installed) install()
+    }
 
     suspend fun check() = lock.withLock {
         mutableState.value = mutableState.value.copy(checking = true, error = null, message = null)
@@ -78,7 +93,7 @@ class ExtractorUpdates(context: Context, private val runtime: ExtractorRuntime, 
                 mutableState.value = mutableState.value.copy(message = "Extractor is up to date.", latest = candidate.version)
                 return@withContext
             }
-            require(candidate.version.matches(Regex("[A-Za-z0-9._-]+"))) { "The release has an invalid version." }
+            require(candidate.version.matches(extractorVersion)) { "The release has an invalid version." }
             val checksums = http.bytes(candidate.checksums, 1_000_000).decodeToString()
             val expected = checksums.lineSequence().mapNotNull { line ->
                 Regex("([0-9a-fA-F]{64})\\s+\\*?yt-dlp").matchEntire(line.trim())?.groupValues?.get(1)?.lowercase()
@@ -124,8 +139,8 @@ class ExtractorUpdates(context: Context, private val runtime: ExtractorRuntime, 
     } }
 
     private suspend fun verified(version: String): File? {
-        if (version == BUNDLED_GENERATION) return runtime.bundledExtractor.takeIf { it.isFile }
-        if (!version.matches(Regex("[A-Za-z0-9._-]+"))) return null
+        if (version == BOOTSTRAP_GENERATION) return runtime.bootstrapExtractor.takeIf { it.isFile }
+        if (!version.matches(extractorVersion)) return null
         return try {
             val directory = File(root, version)
             val manifest = mediaJson.decodeFromString<ExtractorManifest>(File(directory, "manifest.json").readText())
@@ -136,10 +151,10 @@ class ExtractorUpdates(context: Context, private val runtime: ExtractorRuntime, 
         catch (_: Exception) { null }
     }
 
-    private fun generation(): String = runtime.activeExtractor?.parentFile?.name ?: BUNDLED_GENERATION
+    private fun generation(): String = runtime.activeExtractor?.parentFile?.name ?: BOOTSTRAP_GENERATION
 
     private fun activate(file: File) {
-        runtime.activeExtractor = file.takeUnless { it == runtime.bundledExtractor }
+        runtime.activeExtractor = file.takeUnless { it == runtime.bootstrapExtractor }
     }
 
     private suspend fun version(file: File): String = runtime.runner.execute(UUID.randomUUID().toString(), runtime.python,

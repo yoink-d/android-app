@@ -46,13 +46,16 @@ import com.maynkudu.yoinkd.core.model.formatBytes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(model: SettingsViewModel, onFolder: () -> Unit, onNotices: () -> Unit) {
+fun SettingsScreen(model: SettingsViewModel, onFolder: () -> Unit, onNotices: () -> Unit,
+    onAppUpdate: () -> Unit, onInstallUpdate: () -> Unit) {
     val preferences by model.preferences.collectAsStateWithLifecycle()
     val media by model.media.collectAsStateWithLifecycle()
     val jobs by model.jobs.collectAsStateWithLifecycle()
     val storage by model.storage.collectAsStateWithLifecycle()
     val updates by model.updates.collectAsStateWithLifecycle()
     val initialized by model.initialized.collectAsStateWithLifecycle()
+    val setup by model.setup.collectAsStateWithLifecycle()
+    val appUpdates by model.appUpdates.collectAsStateWithLifecycle()
     val folderBlocked = !initialized || storage.busy || jobs.any { !it.phase.terminal }
     val dark = MaterialTheme.colorScheme.background.red < 0.5f
     Scaffold(contentWindowInsets = WindowInsets(0, 0, 0, 0), containerColor = MaterialTheme.colorScheme.background,
@@ -108,6 +111,22 @@ fun SettingsScreen(model: SettingsViewModel, onFolder: () -> Unit, onNotices: ()
                 Text("Download public media from YouTube, Instagram, X, and other supported sites. Private links and sources that require sign-in may be unavailable.",
                     style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             } }
+            item { SettingsSection("App updates") {
+                SettingValue("Installed", BuildConfig.VERSION_NAME)
+                appUpdates.candidate?.let { SettingValue("Available", it.versionName) }
+                if (appUpdates.checking) LinearProgressIndicator(Modifier.fillMaxWidth())
+                AppUpdateProgress(appUpdates)
+                appUpdates.message?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                appUpdates.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
+                TextButton(onClick = model::checkAppUpdates, enabled = !appUpdates.checking && !appUpdates.downloading) { Text("Check for app updates") }
+                if (appUpdates.downloading) TextButton(onClick = model::pauseAppUpdate) { Text("Pause download") }
+                else if (appUpdates.ready) Button(onClick = onInstallUpdate) { Text("Install update") }
+                else if (appUpdates.candidate != null) Button(onClick = onAppUpdate) { Text("View update") }
+            } }
+            item { SettingsSection("Media tools") {
+                MediaSetupContent(setup, model::retrySetup, model::pauseSetup)
+                if (setup.ready) SettingValue("Package version", model.runtimeVersion)
+            } }
             item { SettingsSection("Extraction updates") {
                 SettingValue("Installed", updates.installed)
                 updates.latest?.let { SettingValue("Latest", it) }
@@ -117,12 +136,10 @@ fun SettingsScreen(model: SettingsViewModel, onFolder: () -> Unit, onNotices: ()
                 }
                 updates.message?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
                 updates.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
-                TextButton(onClick = { model.checkUpdates() }, enabled = !updates.checking && !updates.updating) { Text("Check updates") }
-                if (updates.updating) TextButton(onClick = model::cancelUpdate) { Text("Cancel update") }
-                else Button(onClick = model::update, enabled = !updates.checking && updates.latest != updates.installed) { Text("Update extractor") }
-                if (updates.canRollback) TextButton(onClick = { model.rollback() }, enabled = !updates.checking && !updates.updating) { Text("Restore previous extractor") }
-                Text("Python, QuickJS, and FFmpeg update with the app.", style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                TextButton(onClick = { model.checkUpdates() }, enabled = setup.ready && !updates.checking && !updates.updating) { Text("Check updates") }
+                if (updates.updating && model.canCancelUpdate) TextButton(onClick = model::cancelUpdate) { Text("Cancel update") }
+                else if (!updates.updating) Button(onClick = model::update, enabled = setup.ready && !updates.checking && updates.latest != updates.installed) { Text("Update extractor") }
+                if (updates.canRollback) TextButton(onClick = { model.rollback() }, enabled = setup.ready && !updates.checking && !updates.updating) { Text("Restore previous extractor") }
             } }
             item { Surface(shape = RoundedCornerShape(18.dp)) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

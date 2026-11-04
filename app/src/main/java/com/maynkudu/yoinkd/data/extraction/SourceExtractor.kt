@@ -7,14 +7,29 @@ import com.maynkudu.yoinkd.core.model.SourceSelection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.URI
 import java.security.MessageDigest
 import java.util.UUID
 
-class SourceExtractor(private val runtime: ExtractorRuntime) {
-    suspend fun inspect(link: MediaLink): SourceMedia = parseSourceMedia(runtime.extract(
+class SourceExtractor(private val runtime: ExtractorRuntime, private val updates: ExtractorUpdates) {
+    suspend fun inspect(link: MediaLink): SourceMedia {
+        updates.restore()
+        return recoverYoutubeForbidden(link.value, { updates.refreshAutomatically(force = true) }, { inspectOnce(link) }, { inspectOnce(link) })
+    }
+
+    private suspend fun inspectOnce(link: MediaLink): SourceMedia = parseSourceMedia(runtime.extract(
         UUID.randomUUID().toString(), listOf("--dump-single-json", "--skip-download", link.value)), link)
 
     suspend fun acquire(id: String, media: SourceMedia, selection: SourceSelection, directory: File,
+        onProgress: (Long, Long?) -> Unit): List<File> {
+        updates.restore()
+        return recoverYoutubeForbidden(media.sourceUrl,
+            { updates.refreshAutomatically(force = true) },
+            { acquireOnce(id, media, selection, directory, onProgress) },
+            { acquireOnce(id, inspectOnce(MediaLink.parse(media.sourceUrl)), selection, directory, onProgress) })
+    }
+
+    private suspend fun acquireOnce(id: String, media: SourceMedia, selection: SourceSelection, directory: File,
         onProgress: (Long, Long?) -> Unit): List<File> {
         val selected = media.selected(selection.kind, selection.formatId)
             ?: error("That quality is no longer available. Check the link again.")
@@ -59,4 +74,24 @@ class SourceExtractor(private val runtime: ExtractorRuntime) {
         }
         return files
     }
+}
+
+internal suspend fun <T> recoverYoutubeForbidden(url: String, refresh: suspend () -> Unit,
+    first: suspend () -> T, retry: suspend () -> T): T {
+    try { return first() }
+    catch (error: NativeProcessException) {
+        if (!isYoutubeForbidden(url, error)) throw error
+        refresh()
+        try { return retry() }
+        catch (second: NativeProcessException) {
+            if (!isYoutubeForbidden(url, second)) throw second
+            throw NativeProcessException("YouTube still returned HTTP 403 after refreshing the link. Check that it plays without sign-in and try again later.")
+        }
+    }
+}
+
+internal fun isYoutubeForbidden(url: String, error: NativeProcessException): Boolean {
+    val host = runCatching { URI(url).host?.lowercase() }.getOrNull() ?: return false
+    return (host == "youtu.be" || host == "youtube.com" || host.endsWith(".youtube.com")) &&
+        Regex("(?i)\\b(?:http(?: error)?[^\\n]*403|403[^\\n]*forbidden)\\b").containsMatchIn(error.message.orEmpty())
 }

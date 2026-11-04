@@ -50,9 +50,10 @@ class HttpMediaClient(val client: OkHttpClient) {
         }
     }
 
-    suspend fun bytes(url: String, limit: Int = 5_000_000): ByteArray {
+    suspend fun bytes(url: String, limit: Int = 5_000_000, headers: Map<String, String> = emptyMap()): ByteArray {
         require(url.startsWith("https://")) { "Use an HTTPS address." }
-        return read(Request.Builder().url(url).build()) { response ->
+        val request = Request.Builder().url(url).apply { headers.forEach { (name, value) -> header(name, value) } }.build()
+        return read(request) { response ->
             check(response.isSuccessful && response.request.url.isHttps) { "Could not retrieve this file. HTTP ${response.code}." }
             val body = response.body ?: error("The server returned an empty response.")
             require(body.contentLength() <= limit) { "This file exceeds the download limit." }

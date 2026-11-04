@@ -2,49 +2,28 @@ package com.maynkudu.yoinkd.data.extraction
 
 import android.content.Context
 import com.maynkudu.yoinkd.core.model.OutputSupport
-import com.yausername.ffmpeg.FFmpeg
-import com.yausername.youtubedl_android.YoutubeDL
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 
-class ExtractorRuntime(private val context: Context, val runner: NativeProcessRunner) {
+class ExtractorRuntime(private val context: Context, val runner: NativeProcessRunner, private val packages: RuntimePackages) {
     private val initialization = Mutex()
     private var initialized = false
     private var support: OutputSupport? = null
     val nativeDirectory: File get() = File(context.applicationInfo.nativeLibraryDir)
-    val root: File get() = File(context.noBackupFilesDir, "youtubedl-android")
     val python: File get() = File(nativeDirectory, "libpython.so")
     val ffmpeg: File get() = File(nativeDirectory, "libffmpeg.so")
     val ffprobe: File get() = File(nativeDirectory, "libffprobe.so")
-    val bundledExtractor: File get() = File(root, "yt-dlp/yt-dlp")
+    val bootstrapExtractor: File get() = packages.bootstrapExtractor
     @Volatile var activeExtractor: File? = null
         internal set
 
-    val environment: Map<String, String> get() {
-        val pythonHome = File(root, "packages/python/usr").absolutePath
-        return mapOf(
-            "LD_LIBRARY_PATH" to "$pythonHome/lib:${File(root, "packages/ffmpeg/usr/lib").absolutePath}",
-            "SSL_CERT_FILE" to "$pythonHome/etc/tls/cert.pem",
-            "PYTHONHOME" to pythonHome,
-            "TMPDIR" to context.cacheDir.absolutePath,
-            "PATH" to "/system/bin:${nativeDirectory.absolutePath}",
-            "PYTHONUNBUFFERED" to "1",
-        )
-    }
+    val environment: Map<String, String> get() = runtimeEnvironment(packages.directory, nativeDirectory, context.cacheDir)
 
     suspend fun initialize() = initialization.withLock {
         if (initialized) return@withLock
-        withContext(Dispatchers.IO) {
-            YoutubeDL.init(context)
-            FFmpeg.init(context)
-            check(python.canExecute() && ffmpeg.canExecute() && ffprobe.canExecute()) {
-                "The media runtime is unavailable on this device."
-            }
-        }
+        packages.awaitReady()
         initialized = true
     }
 
@@ -56,7 +35,7 @@ class ExtractorRuntime(private val context: Context, val runner: NativeProcessRu
             "--remote-components", "ejs:github", "--ffmpeg-location", ffmpeg.absolutePath,
             "--socket-timeout", "20", "--retries", "2", "--extractor-retries", "1")
         return runner.execute(id, python, listOf(python.absolutePath,
-            (activeExtractor ?: bundledExtractor).absolutePath) + runtimeOptions + options,
+            (activeExtractor ?: bootstrapExtractor).absolutePath) + runtimeOptions + options,
             environment, directory, onLine).output
     }
 
