@@ -1,0 +1,102 @@
+{
+  "checked_at_utc": "2026-11-04T01:59:31.503153+00:00",
+  "ios_source_commit": "0c6ba72b046b3a250d8f27754bc6090d2217f264",
+  "environment": {
+    "os": "Arch Linux",
+    "jdk": 21,
+    "gradle": "8.11.1",
+    "compile_sdk": 35,
+    "target_sdk": 35,
+    "build_tools": "35.0.0"
+  },
+  "command": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./scripts/check.sh",
+  "build": "passed",
+  "assets": {
+    "status": "passed",
+    "fonts": 8,
+    "brand_images": 2,
+    "rune_icons": 22,
+    "font_and_icon_licenses": "verified"
+  },
+  "jvm_tests": {
+    "total": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.maynkudu.yoinkd.core.MediaRulesTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.maynkudu.yoinkd.core.PaletteTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.maynkudu.yoinkd.data.storage.HttpMediaClientTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 72,
+    "categories": {
+      "AndroidGradlePluginVersion": 3,
+      "GradleDependency": 45,
+      "ModifierParameter": 1,
+      "DataExtractionRules": 1,
+      "ObsoleteSdkInt": 1,
+      "VectorPath": 2,
+      "MonochromeLauncherIcon": 1,
+      "IconLocation": 2,
+      "UseKtx": 16
+    }
+  },
+  "application": {
+    "id": "com.maynkudu.yoinkd",
+    "name": "yoink'd",
+    "version": "0.1.0",
+    "min_sdk": 29,
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 148931848,
+      "sha256": "37f36f5d028a3f28553fd19493e2531c8bf3a3e02992b5f6a4bdedc272d3cb2f",
+      "signing": "development key"
+    },
+    {
+      "path": "app/build/outputs/apk/release/app-release-unsigned.apk",
+      "bytes": 113105465,
+      "sha256": "3e78291f5a474b66bd170a6c75bc2e94d71d1fd8b28169c2b59a035e67f2c3c0",
+      "signing": "unsigned"
+    },
+    {
+      "path": "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "bytes": 2388364,
+      "sha256": "b81061b7cd70062d6ce7e4a01c39c6d1670473889651cea4a399ff1fb87a0acd",
+      "signing": "development key"
+    }
+  ],
+  "device_checks": {
+    "status": "deferred at user request",
+    "integration_tests_authored": 9,
+    "integration_tests_executed": 0,
+    "prior_evidence": "docs/verification/screenshots/offline-fullscreen.png",
+    "final_runtime_parity": "unverified"
+  }
+}
