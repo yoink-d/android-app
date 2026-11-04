@@ -1,0 +1,29 @@
+yoink'd uses the following open source projects.
+
+The original iOS source and brand artwork are from maynkudu/yoinkd.
+https://github.com/maynkudu/yoinkd
+
+Stack Sans Text and Stack Sans Notch are licensed under the SIL Open Font License 1.1. The complete license is in font-license.txt.
+
+Rune Icons are from nexvyn/runeicons, licensed under MIT. The complete license is in rune-license.txt.
+https://github.com/nexvyn/runeicons
+
+youtubedl-android bundles CPython, QuickJS, yt-dlp, and FFmpeg. FFmpeg and the Android extraction library use GPL-3.0. Their source and build information are available at the addresses below. The complete GPL license is in gpl-3.0.txt.
+https://github.com/junkfood02/youtubedl-android
+https://github.com/yt-dlp/yt-dlp
+https://github.com/python/cpython
+https://bellard.org/quickjs/
+https://ffmpeg.org/
+
+AndroidX and Jetpack Compose use the Apache License 2.0.
+https://android.googlesource.com/platform/frameworks/support/
+
+Kotlin and Kotlin coroutines use the Apache License 2.0.
+https://github.com/JetBrains/kotlin
+https://github.com/Kotlin/kotlinx.coroutines
+
+OkHttp uses the Apache License 2.0.
+https://github.com/square/okhttp
+
+Coil uses the Apache License 2.0.
+https://github.com/coil-kt/coil

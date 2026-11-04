@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.Yoinkd" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#F1F4F2</item>
+        <item name="android:colorAccent">#438063</item>
+    </style>
+    <color name="launcher_background">#F2F4F2</color>
+</resources>
