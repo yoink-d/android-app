@@ -24,7 +24,9 @@ jobs:
           java-version: "21"
       - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
       - name: Install Android SDK packages
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-35" "build-tools;35.0.0"
       - name: Check assets, tests, lint, and APK builds
         run: ./scripts/check.sh
       - name: Upload APKs and reports
