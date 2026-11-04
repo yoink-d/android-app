@@ -1,0 +1,99 @@
+{
+  "checked_at_utc": "2026-11-04T18:52:37.424639+00:00",
+  "url": "https://github.com/yoink-d/android-app/releases/tag/v0.2.0-alpha.1",
+  "tag": "v0.2.0-alpha.1",
+  "status": "published and verified",
+  "prerelease": true,
+  "version_code": 1001,
+  "signing_certificate_sha256": [
+    "cd07003ff90a5f5b0896e43ad3bf89300307e3f6f5ce64eecfbc41762b4df93f"
+  ],
+  "assets": 17,
+  "all_asset_digests": "GitHub SHA-256 digests match published SHA256SUMS",
+  "public_unauthenticated_apk_downloads": {
+    "arm64-v8a": {
+      "filename": "yoinkd-0.2.0-alpha.1-arm64-v8a.apk",
+      "bytes": 6410866,
+      "sha256": "5f3cffe555f055d6e2d4820015dd575e86d97a53919a3e58e72e15824538f45d",
+      "signature_and_identity": "passed",
+      "embedded_runtime_manifest": "passed"
+    },
+    "armeabi-v7a": {
+      "filename": "yoinkd-0.2.0-alpha.1-armeabi-v7a.apk",
+      "bytes": 6360436,
+      "sha256": "9be56f90a4e059b96e80151dc1b958e54647902e55731c3832773ff162f3b3b9",
+      "signature_and_identity": "passed",
+      "embedded_runtime_manifest": "passed"
+    },
+    "x86": {
+      "filename": "yoinkd-0.2.0-alpha.1-x86.apk",
+      "bytes": 6452036,
+      "sha256": "db8f360a72da32670f6f9b9c7ebc35eaf7a534a355791f90998e3f40f99a3624",
+      "signature_and_identity": "passed",
+      "embedded_runtime_manifest": "passed"
+    },
+    "x86_64": {
+      "filename": "yoinkd-0.2.0-alpha.1-x86_64.apk",
+      "bytes": 6455611,
+      "sha256": "39ecf82652122d8184fc14db9be894cf04332ed9d3bac0bb7c312b9708fcea40",
+      "signature_and_identity": "passed",
+      "embedded_runtime_manifest": "passed"
+    }
+  },
+  "runtime_assets": {
+    "media-tools-0.18.1-arm64-v8a-ffmpeg.zip": {
+      "bytes": 35624931,
+      "sha256": "4664a895283f9f31786be39b0c484c1f96631f02c7c7f9c70a4a4a2da324a092",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-arm64-v8a-python.zip": {
+      "bytes": 14305904,
+      "sha256": "7edecb6c9bd3a94456168d44911d8aea9f917bedef90c320a29500d92ac3eb62",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-armeabi-v7a-ffmpeg.zip": {
+      "bytes": 30476956,
+      "sha256": "5b4a436358e28fc0f0788f5f917dcce9d35c0107b7454ca78dda3191e6dc120c",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-armeabi-v7a-python.zip": {
+      "bytes": 12822487,
+      "sha256": "4d860f1434442c69f128279705806916def2b323d1b43b7fa6ada7dfab0a0571",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-x86-ffmpeg.zip": {
+      "bytes": 34544829,
+      "sha256": "45652e124a27c823fdd76c31207caaf5879eab1e3c69677dd2e89df4e6bc6b50",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-x86-python.zip": {
+      "bytes": 13979299,
+      "sha256": "66ebb37673d4f005f56e4b433907026e23064fc74e0a10aadd3144de20d8bc82",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-x86_64-ffmpeg.zip": {
+      "bytes": 38595503,
+      "sha256": "79a442979bfc0363fcdd7e47f75daf022891e84fc01f3fdd866af785d22321ef",
+      "github_digest_matches_cached_package": true
+    },
+    "media-tools-0.18.1-x86_64-python.zip": {
+      "bytes": 14302766,
+      "sha256": "27caa316e09681ada860fdb6b35c1914e541e266e674141361758ac127fe2f15",
+      "github_digest_matches_cached_package": true
+    }
+  },
+  "release_notes": "Published release body matches packaged CHANGELOG section",
+  "public_runtime_device_setup": "unverified; user requested leaving occupied emulator alone",
+  "public_app_update_installation": "unverified; user requested leaving occupied emulator alone",
+  "source_commit": "fe20ba61caedaf695a8dfec64e2431dffff6aca9",
+  "ci": {
+    "android": {
+      "status": "success",
+      "url": "https://github.com/yoink-d/android-app/actions/runs/41890296492"
+    },
+    "release": {
+      "status": "success",
+      "url": "https://github.com/yoink-d/android-app/actions/runs/41890305697"
+    }
+  }
+}

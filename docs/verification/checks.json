@@ -230,7 +230,22 @@
   },
   "github_release": {
     "tag": "v0.2.0-alpha.1",
-    "status": "not yet published"
+    "status": "published and verified",
+    "url": "https://github.com/yoink-d/android-app/releases/tag/v0.2.0-alpha.1",
+    "version_code": 1001,
+    "source_commit": "fe20ba61caedaf695a8dfec64e2431dffff6aca9",
+    "ci": {
+      "android": {
+        "status": "success",
+        "url": "https://github.com/yoink-d/android-app/actions/runs/41890296492"
+      },
+      "release": {
+        "status": "success",
+        "url": "https://github.com/yoink-d/android-app/actions/runs/41890305697"
+      }
+    },
+    "public_artifacts": "See published-release.json for actual CI APK hashes and sizes, verified public downloads, and all release asset digests.",
+    "device_installation": "unverified; user requested leaving occupied emulator alone"
   },
   "remaining_limits": [
     "The reported physical-phone 403 has not been reproduced.",
